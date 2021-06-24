@@ -26,12 +26,12 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta]=None):
 def create_token(user: User):
     access_token_expires = timedelta(minutes=60)
     access_token = create_access_token(
-        data={"user_id": user.id}, expires_delta=access_token_expires
+        data={"user_id": user.user_id}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-async def get_current_user(token: str):
+def get_current_user(token: str):
     credentials_exception = HTTPException(status_code=400)
     try:
         payload = jwt.decode(token, SECRET, algorithms=ALGORITHM)
@@ -41,7 +41,7 @@ async def get_current_user(token: str):
 
     except jwt.exceptions.InvalidTokenError:
         raise credentials_exception
-    user = await utils.find_by_id(user_id)
+    user = utils.find_by_id(user_id)
     if user is None:
         raise credentials_exception
     return user

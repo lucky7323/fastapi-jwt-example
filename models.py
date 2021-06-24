@@ -4,10 +4,10 @@ from pydantic.networks import EmailStr
 
 
 class User(BaseModel):
-    id: int
+    user_id: int
     email: EmailStr
     password: str
-    companyJoinDate: datetime
+    company_join_date: datetime
 
 
 

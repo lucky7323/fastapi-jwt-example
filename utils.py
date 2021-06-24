@@ -1,21 +1,30 @@
-import asyncio
-import fallback_db
+import sqlite3
+import pandas as pd
+from models import User
 
 
-async def is_user_exist(email: str):
-    # TODO: DB 조회
-    await asyncio.sleep(3)
-    for user in fallback_db.DB:
-        if email == user.email:
-            return True
-    return False
+def is_user_exist(email: str):
+    conn = sqlite3.connect("database/dayoff.db")
+    df = pd.read_sql_query("SELECT * FROM tb_user", conn)
+    conn.close()
+
+    df = df[df['email'] == email]
+    if df.empty:
+        return False
+    else:
+        return True
 
 
-async def find_by_id(user_id: int):
-    # TODO: DB 조회
-    await asyncio.sleep(3)
-    for user in fallback_db.DB:
-        if user_id == user.id:
-            return user
-    return None
+def find_by_id(user_id: int):
+    conn = sqlite3.connect("database/dayoff.db")
+    df = pd.read_sql_query("SELECT * FROM tb_user", conn)
+    conn.close()
+
+    df = df[df['user_id'] == user_id]
+    if df.empty:
+        return None
+    if len(df) == 1:
+        return User(**dict(df.loc[0]))
+    else:
+        return None
 
